@@ -1,6 +1,8 @@
 import gradio as gr
 import pandas as pd
 from decouple import config
+import requests
+
 
 def auth(username, password):
     if username == config("USERNAME") and password == config("PASSWORD"):
@@ -10,30 +12,32 @@ def auth(username, password):
 
 
 def predict(df):
-    # TODO:
-    df["offansive"] = 1
-    df["target"] = None
+    api_url = "http://127.0.0.1:5000/prediction"
 
-    # ***************************
-    # WRITE YOUR INFERENCE STEPS BELOW
-    #
-    # HERE
-    #
-    # *********** END ***********
+    items = {"texts": list(df["text"])}
+
+    response = requests.post(api_url, json=items)
+    results = response.json()["result"]["model"]
+    labels = [result["prediction"] for result in results]
+    is_offensive = [result["is_offensive"] for result in results]
+
+    df["predicted_label"] = labels
+    df["predicted_is_offensive"] = is_offensive
+
     return df
 
 
 def get_file(file):
-    output_file = "output_Nane&Limon.csv"
+    output_file = "Nane&Limon.csv"
 
     # For windows users, replace path seperator
     file_name = file.name.replace("\\", "/")
 
     df = pd.read_csv(file_name, sep="|")
 
-    predict(df)
-    df.to_csv(output_file, index=False, sep="|")
-    return (output_file)
+    predicted_df = predict(df.copy())
+    predicted_df.to_csv(output_file, index=False, sep="|")
+    return output_file
 
 
 # Launch the interface with user password

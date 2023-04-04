@@ -15,6 +15,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+model-gradio-ui/
 lib64/
 parts/
 sdist/
