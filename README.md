@@ -1,6 +1,5 @@
 # Model Gradio UI - Model Evulation
 
---------------- Açıklama ---------------
 # Ortam Oluşturma
 
 Lütfen Python sürümünüzü '3.10' olarak ayarlayın.
